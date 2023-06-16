@@ -1,3 +1,6 @@
 [submodule "conformance"]
 	path = conformance
 	url = https://github.com/libjxl/conformance.git
+[submodule "jxlatte"]
+	path = jxlatte
+	url = https://github.com/Traneptora/jxlatte

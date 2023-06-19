@@ -11,7 +11,7 @@ import json
 
 
 def convert_to_png(temp_file, args):
-    subprocess.run(shlex.split(args.decoder) + [args.input, temp_file.name], check=True)
+    subprocess.run(shlex.split(args.decoder_format % (args.input, temp_file.name)), check=True)
 
 def convert_to_numpy_array(temp_file, args):
     img = Image.open(temp_file.name)
@@ -50,10 +50,10 @@ def main():
     parser.add_argument('output',
                         metavar='OUTPUT',
                         help='path to the output .npy file')
-    parser.add_argument('--decoder',
+    parser.add_argument('--decoder_format',
                         metavar='DECODER',
                         required=True,
-                        help='path to the decoder binary assuming [decoder] in.jxl out.png syntax')
+                        help='path to the decoder binary assuming that the two  syntax')
     parser.add_argument('--orig_icc_out',
                         metavar='ORIG_ICC_OUT',
                         help='path to the original ICC output')
@@ -66,6 +66,9 @@ def main():
     parser.add_argument('--norender_spotcolors',
                         action='store_true',
                         help='flag to disable rendering of spot colors')
+    parser.add_argument('--output_flag',
+                        metavar='OUTPUT_FLAG',
+                        help='the name of hte flag used by the decoder to communicate the output file')
 
     args = parser.parse_args()
 

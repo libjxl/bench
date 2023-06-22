@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JPEG XL conformance bench</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        .success {
+            color: green;
+        }
+        .failure {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <table id="testTable">
+        <tr id="headerRow">
+            <th>Test ID</th>
+        </tr>
+    </table>
+    <script>
+        let dump_dir = 'dump/';
+        let files = ['djxl', 'djxl_via_png', 'jxl-dec', 'jxl_latte'];
+
+        // Create table headers
+        const headerRow = document.getElementById('headerRow');
+        files.forEach(file => {
+            let th = document.createElement('th');
+            th.textContent = file;
+            headerRow.appendChild(th);
+        });
+
+        // Frame data HTML generator function
+        function generateFrameDataHTML(frameData, frameNumber) {
+            if (!frameData || typeof frameData.success === 'undefined') {
+                return `<p>No frame data available</p>`;
+            }
+            let frameSuccessMark = frameData.success ? '<span class="success">&#x2714;</span>' : '<span class="failure">&#x2716;</span>';
+            return `
+                <p>Frame ${frameNumber}: ${frameSuccessMark}</p>
+                <p>Peak error: ${frameData.actual_peak_error}</p>
+                <hr>
+            `;
+        }
+
+        // Fetch data from JSON files and populate table
+        Promise.all(files.map(file => fetch(`${dump_dir}dump_${file}.json`).then(response => response.json())))
+        .then(dataArrays => {
+            let data = {};
+            files.forEach((file, index) => data[file] = dataArrays[index]);
+
+            const table = document.getElementById('testTable');
+            for (let i = 0; i < data[files[0]].length; i++) {
+                const row = document.createElement('tr');
+                const testID = data[files[0]][i].test_id;
+
+                let cellsHTML = files.map(file => {
+                    let test = data[file].find(test => test.test_id === testID);
+                    if (!test) return `<td>No test found for ${testID} in ${file}</td>`; // Skip if test not found
+
+                    let successMark = test.success ? '<span class="success">&#x2714;</span>' : '<span class="failure">&#x2716;</span>'; // Unicode for checkmark and X
+
+                    // Always showing data for the first frame
+                    let frameDataHTML = generateFrameDataHTML(test['frame0_compare_npy'], 0);
+
+                    // Collapsing the rest of the frame data
+                    if (test.num_frames > 1) {
+                        let otherFramesDataHTML = '';
+                        for (let frame = 1; frame < test.num_frames; frame++) {
+                            otherFramesDataHTML += generateFrameDataHTML(test[`frame${frame}_compare_npy`], frame);
+                        }
+                        frameDataHTML += '<details><summary>Rest of the frames</summary>' + otherFramesDataHTML + '</details>';
+                    }
+
+                    return `<td>${successMark},  #Frames: ${test.num_frames} <br> ${frameDataHTML}</td>`;
+                });
+
+                row.innerHTML = `<td>${testID}</td>` + cellsHTML.join('');
+                table.appendChild(row);
+            }
+        });
+    </script>
+</body>
+</html>

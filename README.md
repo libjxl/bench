@@ -15,9 +15,9 @@ Currently we compare the following:
 
 ## How to generate a report
 
-Some of the decoder are and the conformance tests are included as submodules, so as a first step let's
+Some of the decoder are and the conformance tests are included as submodules, so as a first step after cloning this repo let's
 ```
- git submodule update --recursive --init
+git submodule update --recursive --init --depth 1 --recommend-shallow
  ```
 
 

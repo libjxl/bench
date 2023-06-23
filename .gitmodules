@@ -4,3 +4,6 @@
 [submodule "jxlatte"]
 	path = third_party/jxlatte
 	url = https://github.com/Traneptora/jxlatte
+[submodule "third_party/libjxl"]
+	path = third_party/libjxl
+	url = https://github.com/libjxl/libjxl.git

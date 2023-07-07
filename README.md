@@ -11,6 +11,7 @@ Currently we compare the following:
  - [libjxl](https://github.com/libjxl/libjxl) decoding to png
  - [jxl-oxide](https://github.com/tirr-c/jxl-oxide) a decoder written in pure Rust
  - [jxlatte](https://github.com/Traneptora/jxlatte) a pure java decoder
+ - [j40](https://github.com/lifthrasiir/j40) a single-header-file C decoder
 
 
 ## How to generate a report
@@ -52,6 +53,12 @@ ninja -C third_party/jxlatte/build/
 ```
 which should allow you to run `java -jar ./jxlatte/build/java/jxlatte.jar`.
 
+#### j40
+Building j40 is just
+```
+make -C third_party/j40
+```
+
 ### Running the conformance tests
 
 #### Get conformance test data from Google Cloud bucket
@@ -69,6 +76,7 @@ Then you can run the conformance test, let's say on the `main_level10` tests wit
 ./third_party/conformance/scripts/conformance.py --decoder  "python3 scripts/wrap_png.py --decoder './third_party/libjxl/build/tools/djxl %s %s'"  --corpus  ./third_party/conformance/testcases/main_level10.txt --results=./docs/dumps/dump_djxl_via_png.json
 ./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder 'jxl-dec %s -o %s'"  --corpus  ./third_party/conformance/testcases/main_level10.txt --results=./docs/dumps/dump_jxl-dec.json
 ./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder 'java -jar ./third_party/jxlatte/build/java/jxlatte.jar %s %s'"  --corpus  ./third_party/conformance/testcases/main_level10.txt --results=./docs/dumps/dump_jxlatte.json
+./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder './third_party/j40/dj40 %s %s'"  --corpus  ./third_party/conformance/testcases/main_level10.txt --results=./docs/dumps/dump_j40.json
 ```
 Alternative this can be done by running the [`update_dumps.sh`](./scripts/update_dumps.sh) script:
 ```bash

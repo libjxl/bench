@@ -16,3 +16,5 @@ python3 ./third_party/conformance/scripts/conformance.py --decoder "python3 scri
 python3 ./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder 'jxl-dec %s -o %s'" --corpus $CORPUS --results=$DUMP_PATH/dump_jxl-dec.json
 # jxlatte
 python3 ./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder 'java -jar ./third_party/jxlatte/build/java/jxlatte.jar %s %s'" --corpus $CORPUS --results=$DUMP_PATH/dump_jxlatte.json
+# j40
+python3 ./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder './third_party/j40/dj40 %s %s'" --corpus $CORPUS --results=$DUMP_PATH/dump_j40.json

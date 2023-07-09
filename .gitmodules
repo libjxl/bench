@@ -7,3 +7,6 @@
 [submodule "third_party/libjxl"]
 	path = third_party/libjxl
 	url = https://github.com/libjxl/libjxl.git
+[submodule "third_party/j40"]
+	path = third_party/j40
+	url = https://github.com/lifthrasiir/j40.git

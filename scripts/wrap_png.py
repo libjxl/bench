@@ -30,13 +30,15 @@ def write_metadata(args):
     with open(args.metadata_out, 'w') as f:
         json.dump({"frames": [ { "name": "", } ], }, f)
 
+# Skip for now
 def write_orig_icc(args):
-    with open(args.orig_icc_out, 'w') as f:
-        pass
+    return
 
-def write_icc(args):
-    with open(args.icc_out, 'w') as f:
-        pass
+# Placeholder: let ImageMagick extract an icc profile from the PNG
+# This will only work if the PNG has an icc profile in the first place
+# TODO(jon): make this also work for PNG files that use other ways to signal their colorspace
+def write_icc(temp_file, args):
+    subprocess.run(["convert", temp_file.name, args.icc_out])
 
 def write_reconstruct_jpg(args):
     with open(args.output, 'w') as f:
@@ -78,10 +80,10 @@ def main():
 
     with tempfile.NamedTemporaryFile(suffix=".png") as temp_file:
         convert_to_png(temp_file, args)
+        write_icc(temp_file, args)
         convert_to_numpy_array(temp_file, args)
     write_metadata(args)
     write_orig_icc(args)
-    write_icc(args)
 
 if __name__ == "__main__":
     main()

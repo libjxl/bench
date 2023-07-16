@@ -8,6 +8,7 @@ import tempfile
 import argparse
 import shlex
 import json
+import os
 
 
 def convert_to_png(temp_file, args):
@@ -18,6 +19,8 @@ def convert_to_numpy_array(temp_file, args):
     frames = []
 
     for frame in ImageSequence.Iterator(img):
+        if len(np.shape(frame)) == 2:
+            frame = np.reshape(frame,np.shape(frame) + (1,))
         frame_array = np.array(frame).astype(np.float64) / 255.0
         frames.append(frame_array)
 
@@ -34,11 +37,16 @@ def write_metadata(args):
 def write_orig_icc(args):
     return
 
-# Placeholder: let ImageMagick extract an icc profile from the PNG
-# This will only work if the PNG has an icc profile in the first place
+# Placeholder: let ImageMagick extract an icc profile from the PNG and assume it otherwise is sRGB
 # TODO(jon): make this also work for PNG files that use other ways to signal their colorspace
 def write_icc(temp_file, args):
     subprocess.run(["convert", temp_file.name, args.icc_out])
+    if (os.path.getsize(args.icc_out) == 0):
+        with open('scripts/sRGB.icc', 'rb') as file:
+            binary_data = file.read()
+        with open(args.icc_out, 'wb') as file:
+            file.write(binary_data)
+
 
 def write_reconstruct_jpg(args):
     with open(args.output, 'w') as f:

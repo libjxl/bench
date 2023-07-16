@@ -10,14 +10,21 @@
         th, td {
             border: 1px solid #dddddd;
             text-align: left;
-            padding: 8px;
+            padding: 1px 8px;
+        }
+        p {
+            margin: 0;
         }
         .success {
             color: green;
         }
         .failure {
-            color: red;
+            color: #880000;
         }
+        .ok { background-color: #cfc; }
+        .fail { background-color: #fa8; }
+        .noresult { background-color: #b00; color: white;}
+        .missing { background-color: #333; color: white;}
     </style>
 </head>
 <body>
@@ -43,11 +50,12 @@
             if (!frameData || typeof frameData.success === 'undefined') {
                 return `<p>No frame data available</p>`;
             }
-            let frameSuccessMark = frameData.success ? '<span class="success">&#x2714;</span>' : '<span class="failure">&#x2716;</span>';
+             // Unicode for checkmark and X
+            let frameSuccessMark = frameData.success ? '<span class="success">&#x2714;</span>' : `<span class="failure">&#x2716;<br>${frameData.message}</span>`;
             return `
                 <p>Frame ${frameNumber}: ${frameSuccessMark}</p>
+                <p>RMSE: ${frameData.actual_rmse}</p>
                 <p>Peak error: ${frameData.actual_peak_error}</p>
-                <hr>
             `;
         }
 
@@ -64,10 +72,10 @@
 
                 let cellsHTML = files.map(file => {
                     let test = data[file].find(test => test.test_id === testID);
-                    if (!test) return `<td>No test found for ${testID} in ${file}</td>`; // Skip if test not found
+                    if (!test) return `<td class='missing'>No test found for ${testID} in ${file}</td>`; // Skip if test not found
 
-                    let successMark = test.success ? '<span class="success">&#x2714;</span>' : '<span class="failure">&#x2716;</span>'; // Unicode for checkmark and X
-
+                    frameData = test['frame0_compare_npy']
+                    let cellClass = !frameData || typeof frameData.success === 'undefined' ? 'noresult' : (test.success ? 'ok' : 'fail');
                     // Always showing data for the first frame
                     let frameDataHTML = generateFrameDataHTML(test['frame0_compare_npy'], 0);
 
@@ -80,7 +88,7 @@
                         frameDataHTML += '<details><summary>Rest of the frames</summary>' + otherFramesDataHTML + '</details>';
                     }
 
-                    return `<td>${successMark},  #Frames: ${test.num_frames} <br> ${frameDataHTML}</td>`;
+                    return `<td class="${cellClass}">${frameDataHTML}</td>`;
                 });
 
                 row.innerHTML = `<td>${testID}</td>` + cellsHTML.join('');

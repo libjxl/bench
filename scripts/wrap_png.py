@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 import sys
 import numpy as np
-from PIL import Image
-from PIL import ImageSequence
 import subprocess
 import tempfile
 import argparse
@@ -10,18 +8,23 @@ import shlex
 import json
 import os
 
+from apng import APNG, make_text_chunk
+import png
 
 def convert_to_png(temp_file, args):
     subprocess.run(shlex.split(args.decoder_format % (args.input, temp_file.name)), check=True)
 
 def convert_to_numpy_array(temp_file, args):
-    img = Image.open(temp_file.name)
+    img = APNG.open(temp_file);
     frames = []
 
-    for frame in ImageSequence.Iterator(img):
-        if len(np.shape(frame)) == 2:
-            frame = np.reshape(frame,np.shape(frame) + (1,))
-        frame_array = np.array(frame).astype(np.float64) / 255.0
+    for frame, control in img.frames:
+        reader = png.Reader(bytes=frame.to_bytes())
+        width,height,rows,info = reader.asDirect()
+        print(info)
+        frame = np.vstack([s for s in map(np.uint16, [np.asarray(row) for row in rows])])
+        frame = np.reshape(frame, (height, width, info['planes']))
+        frame_array = np.array(frame).astype(np.float64) / (2**info['bitdepth'] - 1)
         frames.append(frame_array)
 
     img_array = np.stack(frames)

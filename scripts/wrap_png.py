@@ -17,11 +17,11 @@ def convert_to_png(temp_file, args):
 def convert_to_numpy_array(temp_file, args):
     img = APNG.open(temp_file);
     frames = []
-
     for frame, control in img.frames:
         reader = png.Reader(bytes=frame.to_bytes())
         width,height,rows,info = reader.asDirect()
         print(info)
+        nbchans = info['planes']
         frame = np.vstack([s for s in map(np.uint16, [np.asarray(row) for row in rows])])
         frame = np.reshape(frame, (height, width, info['planes']))
         frame_array = np.array(frame).astype(np.float64) / (2**info['bitdepth'] - 1)
@@ -30,6 +30,7 @@ def convert_to_numpy_array(temp_file, args):
     img_array = np.stack(frames)
     print(args.output)
     np.save(args.output, img_array)
+    return nbchans
 
 
 def write_metadata(args):
@@ -40,13 +41,17 @@ def write_metadata(args):
 def write_orig_icc(args):
     return
 
-# Placeholder: let ImageMagick extract an icc profile from the PNG and assume it otherwise is sRGB
+# Placeholder: let ImageMagick extract an icc profile from the PNG and assume it otherwise is sRGB or gray with the sRGB transfer curve
 # TODO(jon): make this also work for PNG files that use other ways to signal their colorspace
-def write_icc(temp_file, args):
+def write_icc(temp_file, args, nbchans):
     subprocess.run(["convert", temp_file.name, args.icc_out])
     if (os.path.getsize(args.icc_out) == 0):
-        with open('scripts/sRGB.icc', 'rb') as file:
-            binary_data = file.read()
+        if nbchans >= 3:
+            with open('scripts/sRGB.icc', 'rb') as file:
+                binary_data = file.read()
+        else:
+            with open('scripts/sRGB-Gray.icc', 'rb') as file:
+                binary_data = file.read()
         with open(args.icc_out, 'wb') as file:
             file.write(binary_data)
 
@@ -91,8 +96,8 @@ def main():
 
     with tempfile.NamedTemporaryFile(suffix=".png") as temp_file:
         convert_to_png(temp_file, args)
-        write_icc(temp_file, args)
-        convert_to_numpy_array(temp_file, args)
+        nbchans = convert_to_numpy_array(temp_file, args)
+        write_icc(temp_file, args, nbchans)
     write_metadata(args)
     write_orig_icc(args)
 

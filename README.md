@@ -70,17 +70,19 @@ gcloud auth login
 ./third_party/conformance/scripts/download_and_symlink.sh
 ```
 
-Then you can run the conformance test, let's say on the `main_level10` tests with all decoders, updating `./docs/dumps`, which are displayed by `docs/index.html`
+Then you can run the conformance test, let's say on the `main_level5` tests with all decoders, updating `./docs/dumps`, which are displayed by `docs/index.html`. Make sure to have the python packages `pypng`, `numpy` and `apng` installed.
 ```bash
-./third_party/conformance/scripts/conformance.py --decoder "./third_party/libjxl/build/tools/djxl"  --corpus  ./third_party/conformance/testcases/main_level10.txt --results=./docs/dumps/dump_djxl.json
-./third_party/conformance/scripts/conformance.py --decoder  "python3 scripts/wrap_png.py --decoder './third_party/libjxl/build/tools/djxl %s %s'"  --corpus  ./third_party/conformance/testcases/main_level10.txt --results=./docs/dumps/dump_djxl_via_png.json
-./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder 'jxl-dec %s -o %s'"  --corpus  ./third_party/conformance/testcases/main_level10.txt --results=./docs/dumps/dump_jxl-dec.json
-./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder 'java -jar ./third_party/jxlatte/build/java/jxlatte.jar %s %s'"  --corpus  ./third_party/conformance/testcases/main_level10.txt --results=./docs/dumps/dump_jxlatte.json
-./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder './third_party/j40/dj40 %s %s'"  --corpus  ./third_party/conformance/testcases/main_level10.txt --results=./docs/dumps/dump_j40.json
+python3 ./third_party/conformance/scripts/conformance.py --decoder "./third_party/libjxl/build/tools/djxl"  --corpus  ./third_party/conformance/testcases/main_level5.txt --results=./docs/dumps/dump_djxl.json
+python3 ./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder './third_party/libjxl/build/tools/djxl %s %s --bits_per_sample 16'" --corpus  ./third_party/conformance/testcases/main_level10.txt --results=./docs/dumps/dump_djxl_via_png.json --lax
+python3 ./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder 'jxl-dec %s -o %s -f png16'" --corpus ./third_party/conformance/testcases/main_level5.txt --results=./docs/dumps/dump_jxl-dec.json --lax
+python3 ./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder 'java -jar ./third_party/jxlatte/build/java/jxlatte.jar %s %s'"  --corpus  ./third_party/conformance/testcases/main_level5.txt --results=./docs/dumps/dump_jxlatte.json --lax
+python3 ./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder './third_party/j40/dj40 %s %s'"  --corpus  ./third_party/conformance/testcases/main_level5.txt --results=./docs/dumps/dump_j40.json --lax
+
+
 ```
 Alternative this can be done by running the [`update_dumps.sh`](./scripts/update_dumps.sh) script:
 ```bash
-./scripts/update_dumps.sh ./third_party/conformance/testcases/main_level10.txt ./docs/dumps/
+./scripts/update_dumps.sh ./third_party/conformance/testcases/main_level5.txt ./docs/dumps/
 
 ```
 To see the report locally, you can then run

@@ -1,6 +1,19 @@
 #!/bin/bash
 set -x
 
+# Create a new virtual environment.
+python3 -m venv .venv
+
+# Activate the virtual environment.
+source .venv/bin/activate
+
+# Ensure the virtual environment is deactivated on exit.
+trap deactivate EXIT
+
+# Install the needed packages in the virtual environment.
+pip install pypng numpy apng
+
+
 # Test case corpus path
 CORPUS=$1
 

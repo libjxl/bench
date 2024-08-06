@@ -45,7 +45,7 @@ def write_orig_icc(args):
 # TODO(jon): make this also work for PNG files that use other ways to signal their colorspace
 def write_icc(temp_file, args, nbchans):
     subprocess.run(["convert", temp_file.name, args.icc_out])
-    if (os.path.getsize(args.icc_out) == 0):
+    if not os.path.exists(args.icc_out) or os.path.getsize(args.icc_out) == 0:
         if nbchans >= 3:
             with open('scripts/sRGB.icc', 'rb') as file:
                 binary_data = file.read()

@@ -42,7 +42,7 @@ Then run
 ```bash
 cargo install jxl-oxide-cli
 ```
-which should provide the `jxl-dec` binary.
+which should provide the `jxl-oxide` binary.
 
 #### jxlatte
 For building jxlatte, install `meson` and run
@@ -74,7 +74,7 @@ Then you can run the conformance test, let's say on the `main_level5` tests with
 ```bash
 python3 ./third_party/conformance/scripts/conformance.py --decoder "./third_party/libjxl/build/tools/djxl"  --corpus  ./third_party/conformance/testcases/main_level5.txt --results=./docs/dumps/dump_djxl.json
 python3 ./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder './third_party/libjxl/build/tools/djxl %s %s --bits_per_sample 16'" --corpus  ./third_party/conformance/testcases/main_level10.txt --results=./docs/dumps/dump_djxl_via_png.json --lax
-python3 ./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder 'jxl-dec %s -o %s -f png16'" --corpus ./third_party/conformance/testcases/main_level5.txt --results=./docs/dumps/dump_jxl-dec.json --lax
+python3 ./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder 'jxl-oxide %s -o %s -f png16'" --corpus ./third_party/conformance/testcases/main_level5.txt --results=./docs/dumps/dump_jxl-oxide.json --lax
 python3 ./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder 'java -jar ./third_party/jxlatte/build/java/jxlatte.jar %s %s'"  --corpus  ./third_party/conformance/testcases/main_level5.txt --results=./docs/dumps/dump_jxlatte.json --lax
 python3 ./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder './third_party/j40/dj40 %s %s'"  --corpus  ./third_party/conformance/testcases/main_level5.txt --results=./docs/dumps/dump_j40.json --lax
 

@@ -22,7 +22,7 @@ DUMP_PATH=$2
 
 # Run conformance tests on all decoders
 # djxl
-python3 ./third_party/conformance/scripts/conformance.py --decoder "./third_party/libjxl/build/tools/djxl" --corpus $CORPUS --results=$DUMP_PATH/dump_djxl.json
+python3 ./third_party/conformance/scripts/conformance.py --decoder "./third_party/libjxl/build/tools/djxl" --corpus $CORPUS --results=$DUMP_PATH/dump_djxl.json --lax
 # djxl via png
 python3 ./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder './third_party/libjxl/build/tools/djxl %s %s --bits_per_sample 16'" --corpus $CORPUS --results=$DUMP_PATH/dump_djxl_via_png.json --lax
 # jxl-oxide

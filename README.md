@@ -32,6 +32,13 @@ SKIP_TEST=1 ./third_party/libjxl/ci.sh opt
 ```
 which should provide `./third_party/libjxl/build/tools/djxl`.
 
+### jxl-rs
+```bash
+cd third_party/jxl-rs/
+cargo build --release --bin jxl_cli
+```
+which should provide `./third_party/jxl-rs/target/release/jxl_cli`.
+
 #### jxl-oxide
 Make sure you have an up-to-date rust version, e.g. by running
 ```bash
@@ -73,7 +80,9 @@ gcloud auth login
 Then you can run the conformance test, let's say on the `main_level5` tests with all decoders, updating `./docs/dumps`, which are displayed by `docs/index.html`. Make sure to have the python packages `pypng`, `numpy` and `apng` installed.
 ```bash
 python3 ./third_party/conformance/scripts/conformance.py --decoder "./third_party/libjxl/build/tools/djxl"  --corpus  ./third_party/conformance/testcases/main_level5.txt --results=./docs/dumps/dump_djxl.json --lax
-python3 ./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder './third_party/libjxl/build/tools/djxl %s %s --bits_per_sample 16'" --corpus  ./third_party/conformance/testcases/main_level10.txt --results=./docs/dumps/dump_djxl_via_png.json --lax
+python3 ./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder './third_party/libjxl/build/tools/djxl %s %s --bits_per_sample 16'" --corpus  ./third_party/conformance/testcases/main_level5.txt --results=./docs/dumps/dump_djxl_via_png.json --lax
+python3 ./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_jxl-rs.py --decoder ' third_party/jxl-rs/target/release/jxl_cli %s %s --icc-out %s'" --corpus ./third_party/conformance/testcases/main_level5.txt --results=./docs/dumps/dump_jxl-rs.json --lax
+python3 ./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder ' third_party/jxl-rs/target/release/jxl_cli %s %s '" --corpus ./third_party/conformance/testcases/main_level5.txt --results=./docs/dumps/dump_jxl-rs_via_png.json --lax
 python3 ./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder 'jxl-oxide %s -o %s -f png16'" --corpus ./third_party/conformance/testcases/main_level5.txt --results=./docs/dumps/dump_jxl-oxide.json --lax
 python3 ./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder 'java -jar ./third_party/jxlatte/build/java/jxlatte.jar %s %s'"  --corpus  ./third_party/conformance/testcases/main_level5.txt --results=./docs/dumps/dump_jxlatte.json --lax
 python3 ./third_party/conformance/scripts/conformance.py --decoder "python3 scripts/wrap_png.py --decoder './third_party/j40/dj40 %s %s'"  --corpus  ./third_party/conformance/testcases/main_level5.txt --results=./docs/dumps/dump_j40.json --lax

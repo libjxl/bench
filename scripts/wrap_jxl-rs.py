@@ -7,6 +7,7 @@ import json
 import os
 
 def write_metadata(args):
+    print("writing metadata")
     with open(args.metadata_out, 'w') as f:
         json.dump({"frames": [ { "name": "", } ], }, f)
 
@@ -14,8 +15,8 @@ def write_metadata(args):
 def write_orig_icc(args):
     return
 
-
 def write_reconstruct_jpg(args):
+    with open(args.output, 'w') as f:
         pass
 
 def main():
@@ -52,7 +53,7 @@ def main():
         write_reconstruct_jpg(args)
         return
 
-    subprocess.run(shlex.split(args.decoder_format % (args.input, args.icc_out, args.output)), check=True)
+    subprocess.run(shlex.split(args.decoder_format % (args.input, args.output, args.icc_out)), check=True)
     write_metadata(args)
     write_orig_icc(args)
 

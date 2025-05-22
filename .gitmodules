@@ -10,3 +10,6 @@
 [submodule "third_party/j40"]
 	path = third_party/j40
 	url = https://github.com/lifthrasiir/j40.git
+[submodule "third_party/jxl-rs"]
+	path = third_party/jxl-rs
+	url = https://github.com/libjxl/jxl-rs.git

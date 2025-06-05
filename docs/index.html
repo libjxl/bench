@@ -26,6 +26,13 @@
         .noresult { background-color: #b00; color: white;}
         .missing { background-color: #333; color: white;}
     </style>
+	<script>
+const fetchDumpFile = (path) => {
+	// <REPLACE_WHEN_LOCAL_FILE>
+	return fetch(path).then(response => response.json());
+	// </REPLACE_WHEN_LOCAL_FILE>
+};
+	</script>
 </head>
 <body>
     <table id="testTable">
@@ -35,7 +42,7 @@
     </table>
     <script>
         let dump_dir = 'dumps/';
-        let files = ['djxl', 'djxl_via_png', 'jxl-oxide', 'jxlatte', 'j40'];
+        let files = ['djxl', 'djxl_via_png', 'jxl-rs', 'jxl-rs_via_png', 'jxl-oxide', 'jxlatte', 'j40'];
 
         // Create table headers
         const headerRow = document.getElementById('headerRow');
@@ -60,7 +67,7 @@
         }
 
         // Fetch data from JSON files and populate table
-        Promise.all(files.map(file => fetch(`${dump_dir}dump_${file}.json`).then(response => response.json())))
+        Promise.all(files.map(file => fetchDumpFile(`${dump_dir}dump_${file}.json`)))
         .then(dataArrays => {
             let data = {};
             files.forEach((file, index) => data[file] = dataArrays[index]);

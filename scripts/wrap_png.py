@@ -7,6 +7,7 @@ import argparse
 import shlex
 import json
 import os
+import sys
 
 from apng import APNG, make_text_chunk
 import png
@@ -43,14 +44,14 @@ def write_orig_icc(args):
 
 # Placeholder: let ImageMagick extract an icc profile from the PNG and assume it otherwise is sRGB or gray with the sRGB transfer curve
 # TODO(jon): make this also work for PNG files that use other ways to signal their colorspace
-def write_icc(temp_file, args, nbchans):
+def write_icc(temp_file, args, nbchans, script_path):
     subprocess.run(["convert", temp_file.name, args.icc_out])
     if not os.path.exists(args.icc_out) or os.path.getsize(args.icc_out) == 0:
         if nbchans >= 3:
-            with open('scripts/sRGB.icc', 'rb') as file:
+            with open(f'{script_path}/sRGB.icc', 'rb') as file:
                 binary_data = file.read()
         else:
-            with open('scripts/sRGB-Gray.icc', 'rb') as file:
+            with open(f'{script_path}/sRGB-Gray.icc', 'rb') as file:
                 binary_data = file.read()
         with open(args.icc_out, 'wb') as file:
             file.write(binary_data)
@@ -97,7 +98,7 @@ def main():
     with tempfile.NamedTemporaryFile(suffix=".png") as temp_file:
         convert_to_png(temp_file, args)
         nbchans = convert_to_numpy_array(temp_file, args)
-        write_icc(temp_file, args, nbchans)
+        write_icc(temp_file, args, nbchans, os.path.dirname(os.path.realpath(__file__)))
     write_metadata(args)
     write_orig_icc(args)
 
